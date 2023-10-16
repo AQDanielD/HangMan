@@ -19,20 +19,22 @@ namespace HangMan
         }
 
 
-        public static string unhideWord(string word, char guess)
+        public static string UnhideWord(string word, List<string> guess)
         {
             string hiddenWord = "";
+
             for (int i = 0; i < word.Length; i++)
             {
-                if (word[i] == guess)
+                if (guess.Contains(word[i].ToString()))
                 {
-                    hiddenWord += guess.ToString();
+                    hiddenWord += word[i];
                 }
                 else
                 {
                     hiddenWord += "*";
                 }
             }
+
             return hiddenWord;
         }
 
@@ -40,19 +42,43 @@ namespace HangMan
         {
             Console.Write("Player 1 Enter a Word: ");
 
-            string word = Console.ReadLine();
+            string word = Console.ReadLine().ToLower();
 
-            int lives = word.Length;
+            Console.Clear();
 
-            char guess = ' ';
+            int lives = 5;
+
             bool flag = false;
+
+            List<string> guess = new List<string>();
 
             while (flag == false)
             {
-                Console.WriteLine($"Word is: {unhideWord(word, guess)}");
-                Console.Write($"PLAYER 2 GUESS A LETTER ({lives} Lives): ");
-                guess = char.Parse(Console.ReadLine());
+                Console.WriteLine($"Word is: {UnhideWord(word, guess)}");
+                Console.WriteLine($"PLAYER 2 GUESS A LETTER ({lives} Lives): ");
+                guess.Add(Console.ReadLine());
+                if (UnhideWord(word, guess).Contains("*") == false || lives == 0)
+                {
+                    switch(UnhideWord(word, guess).Contains("*"))
+                    {
+                        case false:
+                            flag = true;
+                            Console.WriteLine("Congratulations! You guessed the word!");
+                            Console.ReadKey();
+                            break;
+
+
+                        case true:
+                            flag = true;
+                            Console.WriteLine("You ran out of lives. The word was: " + word);
+                            Console.ReadKey();
+                            break;
+                    }
+                    flag = true;
+                }
+                lives--;
             }
+
         }
     }
 }
